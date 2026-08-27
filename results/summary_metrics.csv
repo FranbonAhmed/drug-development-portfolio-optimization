@@ -1,0 +1,8 @@
+question,portfolio,n_selected,spend_m,unused_budget_m,project_enpv_m,risk_free_return_m,total_expected_value_m,stdev_m,var95_m
+Q1,Therapeutic-area risk-neutral,46,874.48,125.52,2301.32,3.77,2305.09,4480.67,-5065.62
+Q2,"Variance-constrained example (V=20,000,000)",46,873.43,126.57,2299.47,3.8,2303.27,4470.62,
+Q2,Minimum-risk / all-cash,0,0.0,1000.0,0.0,30.0,30.0,0.0,30.0
+Q3,Company-wide risk-neutral,53,986.95,13.05,2466.21,0.39,2466.6,4742.26,
+Q4,Risk-neutral benchmark from Q1,46,874.48,125.52,,,2305.09,4480.67,-5065.62
+Q4,Maximum-VaR / all-cash,0,0.0,1000.0,0.0,30.0,30.0,0.0,30.0
+Q4,Best portfolio with VaR >= 0,0,0.0,1000.0,0.0,30.0,30.0,0.0,30.0
