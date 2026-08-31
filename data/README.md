@@ -1,6 +1,6 @@
 # Data Setup
 
-This repository expects the same two source files used in the submitted project:
+The original assignment uses two source files:
 
 ```text
 data/
@@ -8,29 +8,48 @@ data/
 └── drugs_cov.csv
 ```
 
-Accepted alternate filenames in the scripts:
+These files were recovered after the public portfolio was created and were used **locally** to validate the portfolio implementation. They are intentionally **not committed to this public repository**.
 
-- `drugs(1).csv`
-- `drugs_cov(1).csv`
+## Why the raw source files are not public
+
+The accompanying course case states that the publication may not be reproduced, stored, used in a spreadsheet, or transmitted without permission from George Washington University. To avoid redistributing course materials or assignment data, this repository publishes the independently written modeling code, derived results, charts, and portfolio documentation instead.
+
+The repository `.gitignore` excludes `data/*.csv` so the source files are less likely to be committed accidentally.
 
 ## `drugs.csv`
 
-The source code expects a wide-format file where:
+The recovered file has:
 
-- the first column is named `Project`;
-- project columns are numbered `1` through `114`;
-- rows include:
+- **4 rows × 115 columns** including the `Project` descriptor column;
+- **114 candidate projects** numbered 1 through 114;
+- rows for:
   - `TA`
   - `Time-to-market`
   - `eNPV`
   - `Cost this Year`
 
-The portfolio scripts reshape this file into one row per candidate project.
+The portfolio scripts reshape this wide-format input into one row per candidate project.
 
 ## `drugs_cov.csv`
 
-The covariance file is read with the first column as the index and is expected to contain a 114 x 114 covariance matrix whose row and column labels correspond to project IDs `1` through `114`.
+The recovered covariance file is a **114 × 114** matrix whose row and column labels correspond to project IDs 1 through 114.
 
-## Why the raw data are not included
+Local validation confirmed that the recovered covariance matrix is symmetric and positive definite.
 
-The uploaded submission report contains code and output but not the underlying CSV files. The repository therefore preserves the source-reported results while keeping the executable code ready for the original data files.
+## Rerunning locally
+
+If you are authorized to use the original course files, rename / copy them locally as:
+
+```text
+data/drugs.csv
+data/drugs_cov.csv
+```
+
+Accepted alternate filenames in the scripts are also:
+
+- `drugs(1).csv`
+- `drugs_cov(1).csv`
+
+Then run the notebooks in numerical order with a valid Gurobi installation and license.
+
+The raw source files themselves should remain local unless redistribution permission is confirmed.
