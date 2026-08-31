@@ -4,7 +4,7 @@
 
 This portfolio project analyzes how a pharmaceutical company can allocate a **$1.0B drug-development budget** across 114 candidate projects while balancing expected value, pipeline composition, therapeutic-area budgets, portfolio variance, and extreme downside risk.
 
-The project was adapted from a graduate optimization submission into a recruiter-facing GitHub case study. The original submission contains the mathematical formulations, full Python/Gurobi code, solver outputs, and efficient-frontier graphs; this repository reorganizes that work into clean notebooks, reusable scripts, result tables, and portfolio documentation.
+The project was adapted from a graduate optimization submission into a recruiter-facing GitHub case study. The original source materials include the assignment case, a starter notebook, `drugs.csv`, and `drugs_cov.csv`. Those source files were used locally to validate the portfolio implementation, but the copyrighted course materials and raw assignment data are intentionally **not redistributed in this public repository**.
 
 ## Business questions
 
@@ -57,6 +57,26 @@ A strict `VaR >= 0` requirement collapses the solution to an **all-cash portfoli
 
 ![Q4 VaR frontier](images/efficient_frontier_q4_var.png)
 
+## Source-data validation
+
+After the public portfolio was assembled, the original assignment data files were recovered and used for local validation.
+
+- `drugs.csv`: **114 candidate projects** with therapeutic area, time-to-market, eNPV, and current-year development cost.
+- `drugs_cov.csv`: **114 × 114** project covariance matrix.
+- The covariance matrix was verified locally as symmetric and positive definite.
+
+An independent local re-solve of the two linear mixed-integer models reproduced the submitted results exactly to rounding:
+
+| Validation | Reproduced result |
+|---|---|
+| Q1 | 46 projects; $874.48M spend; $2,305.0856M total expected value |
+| Q3 | 53 projects; $986.95M spend; $2,466.6015M total expected value |
+| Q1 risk calculation | Std. dev. $4,480.6722M; 95% VaR -$5,065.6202M |
+
+Q2 and Q4 remain documented from the source Gurobi execution in the submitted analysis and can be rerun locally with the original data and a valid Gurobi installation/license.
+
+See [`reports/source_data_validation.md`](reports/source_data_validation.md) for the validation note.
+
 ## Strategic recommendation
 
 The strongest source recommendation is to move toward **company-wide budgeting** because it materially improves expected value and capital utilization, but pair that flexibility with explicit portfolio-risk controls.
@@ -97,7 +117,8 @@ drug-development-portfolio-optimization/
 │   ├── q2_representative_selected_projects.csv
 │   └── q3_selected_projects.csv
 ├── reports/
-│   └── portfolio_summary.md
+│   ├── portfolio_summary.md
+│   └── source_data_validation.md
 ├── data/
 │   └── README.md
 ├── requirements.txt
@@ -106,14 +127,22 @@ drug-development-portfolio-optimization/
 
 ## Data setup
 
-The source assignment uses two CSV files:
+The original source files are:
 
 - `drugs.csv`
 - `drugs_cov.csv`
 
-They are **not included in this repository** because they were not part of the provided submission report.
+They are intentionally **not committed to the public repository**. The assignment materials state that the publication may not be reproduced or transmitted without permission, so the public portfolio contains the independently written modeling code, derived results, and analysis rather than redistributing the course files.
 
-Place them in `data/` before rerunning the notebooks.
+If you are an authorized user of the source materials, place local copies in `data/` before rerunning the notebooks:
+
+```text
+data/
+├── drugs.csv
+└── drugs_cov.csv
+```
+
+The repository `.gitignore` excludes `data/*.csv` to reduce the risk of accidentally committing the source files.
 
 ## Run locally
 
