@@ -4,7 +4,7 @@
 
 This portfolio project analyzes how a pharmaceutical company can allocate a **$1.0B drug-development budget** across 114 candidate projects while balancing expected value, pipeline composition, therapeutic-area budgets, portfolio variance, and extreme downside risk.
 
-The project was adapted from a graduate optimization submission into a recruiter-facing GitHub case study. The original source materials include the assignment case, a starter notebook, `drugs.csv`, and `drugs_cov.csv`. Those source files were used locally to validate the portfolio implementation, but the copyrighted course materials and raw assignment data are intentionally **not redistributed in this public repository**.
+The project was adapted from a graduate optimization submission into a recruiter-facing GitHub case study. The original source materials include the assignment case, a starter notebook, `drugs.csv`, and `drugs_cov.csv`. Those source files were recovered and used locally to validate the portfolio implementation, but the copyrighted course materials and raw assignment data are intentionally **not redistributed in this public repository**.
 
 ## Business questions
 
@@ -20,8 +20,8 @@ The analysis answers four progressively harder portfolio-management questions:
 | Model | Projects | Spend ($M) | Unused ($M) | Expected value ($M) | Std. dev. ($M) | 95% VaR ($M) |
 |---|---:|---:|---:|---:|---:|---:|
 | Q1 - Therapeutic-area risk-neutral | 46 | 874.48 | 125.52 | 2,305.09 | 4,480.67 | -5,065.62 |
-| Q2 - Variance cap 20,000,000 | 46 | 873.43 | 126.57 | 2,303.27 | 4,470.62 | - |
-| Q3 - Company-wide risk-neutral | 53 | 986.95 | 13.05 | **2,466.60** | 4,742.26 | - |
+| Q2 - Variance cap 20,000,000 | 46 | 873.43 | 126.57 | 2,303.27 | 4,470.62 | -5,050.90 |
+| Q3 - Company-wide risk-neutral | 53 | 986.95 | 13.05 | **2,466.60** | 4,742.26 | -5,334.42 |
 | Q4 - Maximum-VaR / all-cash | 0 | 0.00 | 1,000.00 | 30.00 | 0.00 | 30.00 |
 
 ### Q1 - Risk-neutral portfolio
@@ -57,25 +57,30 @@ A strict `VaR >= 0` requirement collapses the solution to an **all-cash portfoli
 
 ![Q4 VaR frontier](images/efficient_frontier_q4_var.png)
 
-## Source-data validation
+## Independent source-data validation
 
-After the public portfolio was assembled, the original assignment data files were recovered and used for local validation.
+After the public portfolio was assembled, the original assignment data files were recovered and used for an independent reproducibility audit.
 
 - `drugs.csv`: **114 candidate projects** with therapeutic area, time-to-market, eNPV, and current-year development cost.
 - `drugs_cov.csv`: **114 × 114** project covariance matrix.
-- The covariance matrix was verified locally as symmetric and positive definite.
+- The covariance matrix was verified as symmetric and positive definite; Cholesky factorization succeeds.
 
-An independent local re-solve of the two linear mixed-integer models reproduced the submitted results exactly to rounding:
+The repository keeps **Gurobi** as the primary modeling implementation because that is the optimization environment used in the source assignment. To avoid relying only on copied solver output, the linear mixed-integer models were independently re-solved using **SciPy/HiGHS**, and covariance-based metrics were recomputed directly from the recovered source files.
 
-| Validation | Reproduced result |
+| Validation | Independently reproduced / recomputed result |
 |---|---|
-| Q1 | 46 projects; $874.48M spend; $2,305.0856M total expected value |
-| Q3 | 53 projects; $986.95M spend; $2,466.6015M total expected value |
-| Q1 risk calculation | Std. dev. $4,480.6722M; 95% VaR -$5,065.6202M |
+| Q1 | Exact 46-project set; $874.48M spend; $2,305.0856M expected value |
+| Q2 | Source 46-project portfolio; variance 19,986,424.85 ≤ 20,000,000; $2,303.2671M expected value |
+| Q3 | Exact 53-project set; $986.95M spend; $2,466.6015M expected value |
+| Q4 benchmark | Q1 std. dev. $4,480.6722M and 95% VaR -$5,065.6202M |
+| Q4 all-cash extreme | $30.00M expected value; $30.00M 95% VaR |
 
-Q2 and Q4 remain documented from the source Gurobi execution in the submitted analysis and can be rerun locally with the original data and a valid Gurobi installation/license.
+Validation artifacts:
 
-See [`reports/source_data_validation.md`](reports/source_data_validation.md) for the validation note.
+- [`notebooks/00_source_data_validation.ipynb`](notebooks/00_source_data_validation.ipynb) — **executed** independent validation notebook
+- [`src/independent_validation.py`](src/independent_validation.py) — reusable validation script
+- [`results/independent_validation.csv`](results/independent_validation.csv) — consolidated validated metrics
+- [`reports/source_data_validation.md`](reports/source_data_validation.md) — methodology, source fingerprints, and detailed results
 
 ## Strategic recommendation
 
@@ -96,12 +101,14 @@ The broader decision-science lesson is that the best pharmaceutical R&D portfoli
 drug-development-portfolio-optimization/
 ├── README.md
 ├── notebooks/
+│   ├── 00_source_data_validation.ipynb
 │   ├── 01_q1_risk_neutral.ipynb
 │   ├── 02_q2_variance_frontier.ipynb
 │   ├── 03_q3_companywide_budget.ipynb
 │   └── 04_q4_var_frontier.ipynb
 ├── src/
 │   ├── common.py
+│   ├── independent_validation.py
 │   ├── q1_risk_neutral.py
 │   ├── q2_variance_frontier.py
 │   ├── q3_companywide_budget.py
@@ -111,6 +118,7 @@ drug-development-portfolio-optimization/
 │   ├── efficient_frontier_q3.png
 │   └── efficient_frontier_q4_var.png
 ├── results/
+│   ├── independent_validation.csv
 │   ├── summary_metrics.csv
 │   ├── q1_selected_projects.csv
 │   ├── q1_pipeline_mix.csv
@@ -132,9 +140,9 @@ The original source files are:
 - `drugs.csv`
 - `drugs_cov.csv`
 
-They are intentionally **not committed to the public repository**. The assignment materials state that the publication may not be reproduced or transmitted without permission, so the public portfolio contains the independently written modeling code, derived results, and analysis rather than redistributing the course files.
+They are intentionally **not committed to the public repository**. The assignment materials state that the publication may not be reproduced or transmitted without permission, so the public portfolio contains independently written modeling code, derived results, and analysis rather than redistributing the course files.
 
-If you are an authorized user of the source materials, place local copies in `data/` before rerunning the notebooks:
+If you are an authorized user of the source materials, place local copies in `data/` before rerunning:
 
 ```text
 data/
@@ -146,7 +154,7 @@ The repository `.gitignore` excludes `data/*.csv` to reduce the risk of accident
 
 ## Run locally
 
-Gurobi requires a valid installation and license.
+Gurobi requires a valid installation and license for the four primary optimization notebooks.
 
 ```bash
 git clone https://github.com/FranbonAhmed/drug-development-portfolio-optimization.git
@@ -159,10 +167,16 @@ jupyter notebook
 
 Open the notebooks in numerical order.
 
+Authorized users with the source CSVs can also run the independent validation path directly:
+
+```bash
+python src/independent_validation.py
+```
+
 ## Technical stack
 
-**Python · Gurobi · pandas · NumPy · Matplotlib · Mixed-Integer Programming · Quadratic Constraints · Efficient Frontier Analysis · Portfolio Variance · Value at Risk**
+**Python · Gurobi · SciPy/HiGHS · pandas · NumPy · Matplotlib · Mixed-Integer Programming · Quadratic Constraints · Efficient Frontier Analysis · Portfolio Variance · Value at Risk**
 
 ## Portfolio positioning
 
-This project demonstrates the connection between **pharmaceutical strategy, finance, risk management, and optimization**. It is designed as a portfolio case study rather than a reproduction of the original assignment document.
+This project demonstrates the connection between **pharmaceutical strategy, finance, risk management, and optimization**. It is designed as a professional portfolio case study rather than a reproduction of the original assignment document.
